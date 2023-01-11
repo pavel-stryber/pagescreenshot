@@ -31,7 +31,7 @@ const logger = new Logger();
                     await button.click();
                 }
             });
-            logger.log(screenshotFileName);
+            logger.log(`\x1b[32m${screenshotFileName}\x1b[0m`);
         } catch (e) {
             logger.log('\x1b[31mfailed \x1b[0m');
             logger.log(`    ${e.message}`);
