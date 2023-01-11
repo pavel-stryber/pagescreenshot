@@ -27,33 +27,39 @@ module.exports = async(
   });
 
   const page = await browser.newPage();
-  await page.setDefaultNavigationTimeout(0);
-  await page.setViewport({width: viewportWidth, height: viewportHeight}); //, deviceScaleFactor: 2});
-  await page.goto(url, { waitUntil: 'networkidle0' });
 
-  if (onPageSetup) {
-    await onPageSetup({ page });
-  }
+  try {
+    await page.setDefaultNavigationTimeout(0);
+    await page.setViewport({width: viewportWidth, height: viewportHeight}); //, deviceScaleFactor: 2});
+    await page.goto(url, { waitUntil: 'networkidle0' });
 
-  await page.evaluate(() => { window.scrollBy(0, window.innerHeight); })
-  await waitFor(1000);
-  let innerHeight = 0;
-  innerHeight = await page.evaluate(() => { return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ); } ); //return window.innerHeight; } );
-  const times = innerHeight / viewportHeight;
-  for(let x=0; x < times; x++) {
-     await page.evaluate((x, viewportHeight) => { window.scrollBy(0, viewportHeight*x); },x, viewportHeight)
-     await waitFor(1000);
-  }
-  await page.evaluate(_ => {
+    if (onPageSetup) {
+      await onPageSetup({ page });
+    }
+
+    await page.evaluate(() => { window.scrollBy(0, window.innerHeight); })
+    await waitFor(1000);
+    let innerHeight = 0;
+    innerHeight = await page.evaluate(() => { return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ); } ); //return window.innerHeight; } );
+    const times = innerHeight / viewportHeight;
+    for(let x=0; x < times; x++) {
+      await page.evaluate((x, viewportHeight) => { window.scrollBy(0, viewportHeight*x); },x, viewportHeight)
+      await waitFor(1000);
+    }
+    await page.evaluate(_ => {
       window.scrollTo(0, 0);
     });
 
-  const filename = slug + '.png';
-  await page.screenshot({
-    path: destDir + '/' + filename,
-    fullPage: true
-  });
-  browser.close();
+    const filename = slug + '.png';
+    await page.screenshot({
+      path: destDir + '/' + filename,
+      fullPage: true
+    });
+    browser.close();
 
-  return filename;
+    return filename;
+  } catch (e) {
+    browser.close();
+    throw new Error(e);
+  }
 };

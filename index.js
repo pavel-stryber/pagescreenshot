@@ -15,21 +15,28 @@ const logger = new Logger();
     fs.mkdirSync(destDir);
 
     const liner = new lineByLine(sourceURLs);
-
     let line;
     let lineIndex = 0;
     while (line = liner.next()) {
         const url = baseURL + line.toString();
         logger.logWithLoader(`[${lineIndex}] ${url} => `);
-        const screenshotFileName = await makePageScreenshot(url, {
-            destDir,
-            onPageSetup: async ({ page }) => {
-                await page.addStyleTag({ path: './styles.css' });
-                const [button] = await page.$x("//button[contains(., 'Sounds good')]");
-                await button.click();
-            }
-        });
-        logger.log(screenshotFileName);
+
+        let screenshotFileName;
+        try {
+            screenshotFileName = await makePageScreenshot(url, {
+                destDir,
+                onPageSetup: async ({ page }) => {
+                    await page.addStyleTag({ path: './styles.css' });
+                    const [button] = await page.$x("//button[contains(., 'Sounds good')]");
+                    await button.click();
+                }
+            });
+            logger.log(screenshotFileName);
+        } catch (e) {
+            logger.log('\x1b[31mfailed \x1b[0m');
+            logger.log(`    ${e.message}`);
+        }
+
         lineIndex++;
     }
 })();
