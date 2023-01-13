@@ -1,10 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
 const makePageScreenshot = require('./makePageScreenshot');
-const customPageSetup = require('./customPageSetup');
 
 const DEFAULT_SOURCE_URLS = './urls.txt';
 const DEFAULT_DESTINATION_DIR = './screenshots';
+const DEFAULT_PAGE_SETUP = './defaultPageSetup';
 
 const getProcessParams = () => {
     const args = process.argv.slice(2);
@@ -39,6 +39,8 @@ const logger = new Logger();
     const args = getProcessParams();
     const destDir = args['dest'] || DEFAULT_DESTINATION_DIR;
     const sourceURLs = args['source'] || DEFAULT_SOURCE_URLS;
+    const pageSetupPath = args['page-setup'] || DEFAULT_PAGE_SETUP;
+    const pageSetup = require(pageSetupPath);
 
     let urls = args.urls;
     if (!urls) {
@@ -58,7 +60,7 @@ const logger = new Logger();
         try {
             screenshotFileName = await makePageScreenshot(url, {
                 destDir,
-                onPageSetup: customPageSetup,
+                onPageSetup: pageSetup,
             });
             logger.log(`\x1b[32m${screenshotFileName}\x1b[0m`);
         } catch (e) {
