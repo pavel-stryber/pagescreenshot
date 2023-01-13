@@ -1,43 +1,71 @@
 const fs = require('fs');
 const readline = require('readline');
-const lineByLine = require('n-readlines');
 const makePageScreenshot = require('./makePageScreenshot');
+const customPageSetup = require('./customPageSetup');
 
-const baseURL = 'https://stryber.com';
-const sourceURLs = './urls.txt';
-const destDir = './screenshots';
+const DEFAULT_SOURCE_URLS = './urls.txt';
+const DEFAULT_DESTINATION_DIR = './screenshots';
+
+const getProcessParams = () => {
+    const args = process.argv.slice(2);
+
+    let urls = [];
+    let params = {};
+    let i = 0;
+    while (i < args.length) {
+        if (args[i].match(/^--/)) {
+            const param = args[i].replace('--', '');
+            if (!args[i + 1]) {
+                throw new Error(`Absent value of ${param}`);
+            }
+            params[param] = args[i + 1];
+            i += 2;
+            continue;
+        }
+        urls.push(args[i]);
+        i++;
+    }
+
+    return {
+        ...params,
+        urls: urls.length > 0 ? urls : null,
+    }
+};
 
 
 const logger = new Logger();
 
 (async () => {
+    const args = getProcessParams();
+    const destDir = args['dest'] || DEFAULT_DESTINATION_DIR;
+    const sourceURLs = args['source'] || DEFAULT_SOURCE_URLS;
+
+    let urls = args.urls;
+    if (!urls) {
+        const urlsFileContent = fs.readFileSync(sourceURLs, 'utf-8');
+        urls = urlsFileContent.replace(/\n$/, '').split(/\r?\n/);
+    }
+
+    // Cleanup destination directory
     fs.rmSync(destDir, { recursive: true, force: true });
     fs.mkdirSync(destDir);
 
-    const liner = new lineByLine(sourceURLs);
-    let line;
-    let lineIndex = 0;
-    while (line = liner.next()) {
-        const url = baseURL + line.toString();
-        logger.logWithLoader(`[${lineIndex}] ${url} => `);
+    let urlIndex = 0;
+    for (const url of urls) {
+        logger.logWithLoader(`[${urlIndex + 1}/${urls.length}] ${url} => `);
 
         let screenshotFileName;
         try {
             screenshotFileName = await makePageScreenshot(url, {
                 destDir,
-                onPageSetup: async ({ page }) => {
-                    await page.addStyleTag({ path: './styles.css' });
-                    const [button] = await page.$x("//button[contains(., 'Sounds good')]");
-                    await button.click();
-                }
+                onPageSetup: customPageSetup,
             });
             logger.log(`\x1b[32m${screenshotFileName}\x1b[0m`);
         } catch (e) {
             logger.log('\x1b[31mfailed \x1b[0m');
             logger.log(`    ${e.message}`);
         }
-
-        lineIndex++;
+        urlIndex++;
     }
 })();
 
