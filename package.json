@@ -1,7 +1,7 @@
 {
   "name": "pagescreenshot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Package for making screenshots of web pages by their urls. For usage type 'pagescreenshot --help'",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
