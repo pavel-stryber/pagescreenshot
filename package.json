@@ -1,5 +1,5 @@
 {
-  "name": "pagescreenshot",
+  "name": "webpagescreenshot",
   "version": "1.0.0",
   "description": "Package for making screenshots of web pages by their urls. For usage type 'pagescreenshot --help'",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "pagescreenshot": "./bin/global.js"
+    "webpagescreenshot": "./bin/global.js"
   },
   "author": "Pavel Lapin",
   "license": "ISC",
