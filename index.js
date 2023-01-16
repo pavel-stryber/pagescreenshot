@@ -55,8 +55,9 @@ Custom params:
 ----------------------------------------------------------------------   
     --help          Show help message
     --dest          Set destination directory [./]
-    --source        Set path for source file with urls [urls.txt]
-    --page-setup    Set path for script with custom page setup
+    --source        Set path for source file with urls [./urls.txt]
+    --page-setup    Set path for script with custom page setup,
+                    For reference look into samplePageSetup.js.
 ----------------------------------------------------------------------`);
 }
 
