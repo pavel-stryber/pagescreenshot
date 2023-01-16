@@ -4,7 +4,7 @@ const readline = require('readline');
 const makePageScreenshot = require('./makePageScreenshot');
 
 const DEFAULT_SOURCE_URLS = './urls.txt';
-const DEFAULT_DESTINATION_DIR = './screenshots';
+const DEFAULT_DESTINATION_DIR = './';
 
 const getProcessParams = () => {
     const args = process.argv.slice(2);
@@ -48,13 +48,13 @@ Basic usage:
         > pagescreenshot
         
     Specify urls through command line parameters:
-        > pagascreenshot url1 url2 url3 ...
+        > pagescreenshot url1 url2 url3 ...
 ----------------------------------------------------------------------    
 
 Custom params:
 ----------------------------------------------------------------------   
     --help          Show help message
-    --dest          Set destination directory [screenshots]
+    --dest          Set destination directory [./]
     --source        Set path for source file with urls [urls.txt]
     --page-setup    Set path for script with custom page setup
 ----------------------------------------------------------------------`);
@@ -85,9 +85,12 @@ const logger = new Logger();
         urls = urlsFileContent.replace(/\n$/, '').split(/\r?\n/);
     }
 
-    // Cleanup destination directory
-    fs.rmSync(destDir, { recursive: true, force: true });
-    fs.mkdirSync(destDir);
+    // Create destination directory if needed
+    if (destDir !== path.resolve('./') &&
+        !fs.existsSync(destDir)
+    ) {
+        fs.mkdirSync(destDir);
+    }
 
     let urlIndex = 0;
     for (const url of urls) {
@@ -99,7 +102,7 @@ const logger = new Logger();
                 destDir,
                 onPageSetup: pageSetup,
             });
-            logger.log(`\x1b[32m${screenshotFileName}\x1b[0m`);
+            logger.log(`\x1b[32m${destDir}/${screenshotFileName}\x1b[0m`);
         } catch (e) {
             logger.log('\x1b[31mfailed \x1b[0m');
             logger.log(`    ${e.message}`);
