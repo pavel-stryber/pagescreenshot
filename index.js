@@ -40,15 +40,15 @@ const getProcessParams = () => {
 };
 const showHelpMessage = () => {
     console.log(
-`Pagescreenshot is an utility which helps to make web-page screenshots.
+`Makescreenshot is an utility which helps to make web-page screenshots.
 
 Basic usage:
 ----------------------------------------------------------------------
     Specify urls in urls.txt file:
-        > pagescreenshot
+        > makescreenshot
         
     Specify urls through command line parameters:
-        > pagescreenshot url1 url2 url3 ...
+        > makescreenshot url1 url2 url3 ...
 ----------------------------------------------------------------------    
 
 Custom params:
