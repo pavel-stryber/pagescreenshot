@@ -1,10 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 const readline = require('readline');
 const makePageScreenshot = require('./makePageScreenshot');
 
 const DEFAULT_SOURCE_URLS = './urls.txt';
 const DEFAULT_DESTINATION_DIR = './screenshots';
-const DEFAULT_PAGE_SETUP = './defaultPageSetup';
 
 const getProcessParams = () => {
     const args = process.argv.slice(2);
@@ -15,6 +15,13 @@ const getProcessParams = () => {
     while (i < args.length) {
         if (args[i].match(/^--/)) {
             const param = args[i].replace('--', '');
+
+            if (param === 'help') {
+                params[param] = true;
+                i++;
+                break;
+            }
+
             if (!args[i + 1]) {
                 throw new Error(`Absent value of ${param}`);
             }
@@ -31,16 +38,46 @@ const getProcessParams = () => {
         urls: urls.length > 0 ? urls : null,
     }
 };
+const showHelpMessage = () => {
+    console.log(
+`Pagescreenshot is an utility which helps to make web-page screenshots.
+
+Basic usage:
+----------------------------------------------------------------------
+    Specify urls in urls.txt file:
+        > pagescreenshot
+        
+    Specify urls through command line parameters:
+        > pagascreenshot url1 url2 url3 ...
+----------------------------------------------------------------------    
+
+Custom params:
+----------------------------------------------------------------------   
+    --help          Show help message
+    --dest          Set destination directory [screenshots]
+    --source        Set path for source file with urls [urls.txt]
+    --page-setup    Set path for script with custom page setup
+----------------------------------------------------------------------`);
+}
 
 
 const logger = new Logger();
 
 (async () => {
     const args = getProcessParams();
-    const destDir = args['dest'] || DEFAULT_DESTINATION_DIR;
-    const sourceURLs = args['source'] || DEFAULT_SOURCE_URLS;
-    const pageSetupPath = args['page-setup'] || DEFAULT_PAGE_SETUP;
-    const pageSetup = require(pageSetupPath);
+
+    if (args.help) {
+        showHelpMessage();
+        return;
+    }
+
+    const destDir = path.resolve(args['dest'] || DEFAULT_DESTINATION_DIR);
+    const sourceURLs = path.resolve(args['source'] || DEFAULT_SOURCE_URLS);
+    const pageSetupPath = args['page-setup'] || null;
+    let pageSetup;
+    if (pageSetupPath) {
+        pageSetup = require(pageSetupPath);
+    }
 
     let urls = args.urls;
     if (!urls) {
