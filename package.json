@@ -1,6 +1,6 @@
 {
   "name": "makescreenshot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Package for making screenshots of web pages by their urls. For usage type 'makescreenshot --help'",
   "main": "index.js",
   "scripts": {
