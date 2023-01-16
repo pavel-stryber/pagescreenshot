@@ -5,6 +5,8 @@ const makePageScreenshot = require('./makePageScreenshot');
 
 const DEFAULT_SOURCE_URLS = './urls.txt';
 const DEFAULT_DESTINATION_DIR = './';
+const DEFAULT_VIEWPORT_WIDTH = 1024;
+const DEFAULT_VIEWPORT_HEIGHT = 768;
 
 const getProcessParams = () => {
     const args = process.argv.slice(2);
@@ -54,10 +56,10 @@ Basic usage:
 Custom params:
 ----------------------------------------------------------------------   
     --help          Show help message
-    --dest          Set destination directory [./]
-    --source        Set path for source file with urls [./urls.txt]
-    --width         Set viewport width [1024]
-    --height        Set viewport height [768]
+    --dest          Set destination directory [${DEFAULT_DESTINATION_DIR}]
+    --source        Set path for source file with urls [${DEFAULT_SOURCE_URLS}]
+    --width         Set viewport width [${DEFAULT_VIEWPORT_WIDTH}]
+    --height        Set viewport height [${DEFAULT_VIEWPORT_HEIGHT}]
     --page-setup    Set path for script with custom page setup,
                     For reference look into samplePageSetup.js.
 ----------------------------------------------------------------------`);
@@ -76,8 +78,8 @@ const logger = new Logger();
 
     const destDir = path.resolve(args['dest'] || DEFAULT_DESTINATION_DIR);
     const sourceURLs = path.resolve(args['source'] || DEFAULT_SOURCE_URLS);
-    const viewportWidth = args['width'] && parseInt(args['width']) || 1024;
-    const viewportHeight = args['height'] && parseInt(args['height']) || 768;
+    const viewportWidth = args['width'] && parseInt(args['width']) || DEFAULT_VIEWPORT_WIDTH;
+    const viewportHeight = args['height'] && parseInt(args['height']) || DEFAULT_VIEWPORT_HEIGHT;
     const pageSetupPath = args['page-setup'] || null;
     let pageSetup;
     if (pageSetupPath) {
