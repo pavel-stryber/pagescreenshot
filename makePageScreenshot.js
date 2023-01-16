@@ -1,8 +1,5 @@
 const puppeteer = require('puppeteer');
 
-const viewportWidth = 1024;
-const viewportHeight = 768;
-
 
 function waitFor (ms) {
   return new Promise(resolve => setTimeout(() => resolve(), ms));
@@ -12,6 +9,8 @@ module.exports = async(
   url,
   {
     destDir,
+    viewportWidth,
+    viewportHeight,
     onPageSetup
   }
 ) => {

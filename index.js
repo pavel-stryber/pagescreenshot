@@ -56,6 +56,8 @@ Custom params:
     --help          Show help message
     --dest          Set destination directory [./]
     --source        Set path for source file with urls [./urls.txt]
+    --width         Set viewport width [1024]
+    --height        Set viewport height [768]
     --page-setup    Set path for script with custom page setup,
                     For reference look into samplePageSetup.js.
 ----------------------------------------------------------------------`);
@@ -74,6 +76,8 @@ const logger = new Logger();
 
     const destDir = path.resolve(args['dest'] || DEFAULT_DESTINATION_DIR);
     const sourceURLs = path.resolve(args['source'] || DEFAULT_SOURCE_URLS);
+    const viewportWidth = args['width'] && parseInt(args['width']) || 1024;
+    const viewportHeight = args['height'] && parseInt(args['height']) || 768;
     const pageSetupPath = args['page-setup'] || null;
     let pageSetup;
     if (pageSetupPath) {
@@ -101,6 +105,8 @@ const logger = new Logger();
         try {
             screenshotFileName = await makePageScreenshot(url, {
                 destDir,
+                viewportWidth,
+                viewportHeight,
                 onPageSetup: pageSetup,
             });
             logger.log(`\x1b[32m${destDir}/${screenshotFileName}\x1b[0m`);
