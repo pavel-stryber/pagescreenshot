@@ -76,7 +76,7 @@ const logger = new Logger();
     const pageSetupPath = args['page-setup'] || null;
     let pageSetup;
     if (pageSetupPath) {
-        pageSetup = require(pageSetupPath);
+        pageSetup = require(path.resolve(pageSetupPath));
     }
 
     let urls = args.urls;
